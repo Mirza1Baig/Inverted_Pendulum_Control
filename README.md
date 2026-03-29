@@ -1,13 +1,11 @@
 # Stability Control System
 A high-fidelity cart-pole simulation using RK4 integration and a non-linear control law to stabilize a 9-degree initial perturbation.
 
- 
-### A Study in Disturbance Rejection and Asymmetric Control
 
 ![Activestabilityproject-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/2710f90b-f7c4-48b1-91a9-ad20caa7248f)
 Figure 1: Active Disturbance Rejection: Real-time stabilization of a $9.0^{\circ}$ initial perturbation. The controller utilizes non-linear gain scheduling to achieve asymptotic stability within 5 seconds while maintaining strict lateral track constraints.
 
-
+### A Study in Disturbance Rejection and Asymmetric Control
 
 ## Project Overview
 This project implements a physics simulation of the classic Inverted Pendulum (Cart-Pole) problem. The goal was to design a robust controller capable of stabilizing the pole from a 9 to 10-degree initial tilt while maintaining the cart within a constrained 4-meter track.
