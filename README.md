@@ -1,7 +1,7 @@
 # Stability Control System
 A high-fidelity cart-pole simulation using RK4 integration and a non-linear control law to stabilize a 9-degree initial perturbation.
 
-
+ 
 ### A Study in Disturbance Rejection and Asymmetric Control
 
 ![Activestabilityproject-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/2710f90b-f7c4-48b1-91a9-ad20caa7248f)
