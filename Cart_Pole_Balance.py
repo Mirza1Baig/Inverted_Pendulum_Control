@@ -1,5 +1,5 @@
 """
-Cart-Pole Project
+Cart-Pole Project 
 ========================
 Goal: Stabilize the pole for >60s starting from a 9-degree tilt.
 """
@@ -23,7 +23,7 @@ F_STEPS = 3
 MAX_F = 400.0
 
 # -- Manually Tuned constants --
-# Bumped up base_f to 255 to catch the initial fall more aggressively
+# Bumped up base_f to 255 to catch the initial fall more aggressively, tune p_curve for feather balancing
 base_f = 255.0
 p_curve = 0.72
 f_extra = 0.09
@@ -49,7 +49,7 @@ def get_accel(state, F):
 
 
 def rk4_step(state, F):
-    # Standard RK4 integration for better stability than Euler
+    # RK4 integration for better stability than Euler
     k1 = get_accel(state, F)
     k2 = get_accel(state + DT/2 * k1, F)
     k3 = get_accel(state + DT/2 * k2, F)
@@ -57,7 +57,7 @@ def rk4_step(state, F):
     return state + DT/6 * (k1 + 2*k2 + 2*k3 + k4)
 
 
-# -- Control Logic --
+# -- Control Logic -----------------
 
 class MyController:
     def __init__(self):
@@ -81,7 +81,7 @@ class MyController:
         f_ff = k_accel * th_a_est * sin_th
         mag = f_main + f_plus + abs(f_ff)
 
-        # Centering bias logic
+        # Centering bias
         to_mid = -np.sign(x) if abs(x) > 1e-4 else 0.0
         p_side = np.sign(th) if abs(th) > 1e-6 else 0.0
         
@@ -154,7 +154,7 @@ class MySim:
         self.h_x.append(self.state[0])
 
 
-# -- Visualization --
+# -- Visualization -------------------------------------------------------
 
 def main():
     sim = MySim()
@@ -240,7 +240,7 @@ def main():
         x_cur, _, th_cur, _ = sim.state
         deg_cur = np.degrees(th_cur)
 
-        # Coordinate math
+        # Coordinates
         tip_x, tip_y = x_cur + np.sin(th_cur)*0.88, 0.11 + np.cos(th_cur)*0.88
         
         cart.set_x(x_cur - 0.28)
@@ -258,16 +258,20 @@ def main():
             txt_msg.set_color("red")
         else:
             txt_msg.set_text("ACTIVE")
-
-        # Refreshing graphs
-        n_pts = min(len(sim.h_t), 600)
-        if n_pts > 2:
-            t_data = sim.h_t[-n_pts:]
-            line_th.set_data(t_data, sim.h_th[-n_pts:])
-            line_x.set_data(t_data, sim.h_x[-n_pts:])
-            ax2.set_xlim(t_data[0], max(t_data[-1], t_data[0] + 1))
-            ax3.set_xlim(t_data[0], max(t_data[-1], t_data[0] + 1))
-
+        window_sec = 10.0  # Shows 10 seconds of real-world time
+        
+        if len(sim.h_t) > 2:
+            t_calibrated = np.array(sim.h_t) * 3.0
+            current_time = t_calibrated[-1]
+            
+            mask = t_calibrated > (current_time - window_sec)
+            
+            line_th.set_data(t_calibrated[mask], np.array(sim.h_th)[mask])
+            line_x.set_data(t_calibrated[mask], np.array(sim.h_x)[mask])
+            
+            ax2.set_xlim(max(0, current_time - window_sec), max(window_sec, current_time))
+            ax3.set_xlim(max(0, current_time - window_sec), max(window_sec, current_time))
+            
         return cart, w1, w2, p_line, p_bob, txt_th, txt_x
 
     ani = animation.FuncAnimation(fig, update, interval=18, blit=False)
